@@ -97,12 +97,28 @@ spec:
           mountPath: /etc/fluent/config.d
         - name: buffer
           mountPath: "/var/log/fluentd-buffers"
+        {{- if .Values.tls.enabled }}
+        - name: tls-info-{{ template "fluentd.fullname" . }}
+          mountPath: "/etc/fluent/certs"
+          readOnly: true
+        - name: ca-info-{{ template "fluentd.fullname" . }}
+          mountPath: "/etc/fluent/ca"
+          readOnly: true
+        {{- end }}
       serviceAccountName: {{ template "fluentd.fullname" . }}
       volumes:
         - name: config-volume-{{ template "fluentd.fullname" . }}
           configMap:
             name: {{ template "fluentd.fullname" . }}
             defaultMode: 0777
+        {{- if .Values.tls.enabled }}
+        - name: tls-info-{{ template "fluentd.fullname" . }}
+          secret:
+            secretName: {{ .Values.tls.serversecretname }}
+        - name: ca-info-{{ template "fluentd.fullname" . }}
+          secret:
+            secretName: {{ .Values.tls.casecretname }}
+        {{- end }}
         {{- if and .Values.persistence.enabled (not .Values.autoscaling.enabled) }}
         - name: buffer          
           persistentVolumeClaim:

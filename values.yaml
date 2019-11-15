@@ -31,6 +31,11 @@ plugins:
   enabled: false
   pluginsList: []
 
+tls:
+  enabled: false
+  serversecretname: fluentd-server-cert
+  casecretname: ca-cert
+
 service:
   annotations: {}
   type: ClusterIP
@@ -41,6 +46,10 @@ service:
     - name: "monitor-agent"
       protocol: TCP
       containerPort: 24220
+
+externalService:
+  enabled: true
+  port: 24284
 
 metrics:
   enabled: false

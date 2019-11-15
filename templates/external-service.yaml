@@ -1,0 +1,21 @@
+{{- if .Values.externalService.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-{{ template "fluentd.fullname" . }}
+  labels:
+    app: external-{{ template "fluentd.name" . }}
+    chart: {{ template "fluentd.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  ports:
+    - name: tls-fluentd
+      port: {{ .Values.externalService.port }}
+      protocol: TCP
+  selector:
+    app: {{ template "fluentd.name" . }}
+    release: {{ .Release.Name }}
+  type: LoadBalancer
+  loadBalancerIP: {{ .Values.externalService.ip }}
+{{- end -}}

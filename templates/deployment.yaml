@@ -44,7 +44,7 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
       {{- if and (.Values.plugins.enabled) (gt (len .Values.plugins.pluginsList) 0) }}
-        command: ["/bin/sh", "-c", "/etc/fluent/config.d/install-plugins.sh"]
+        command: ["/bin/sh", "-c", "/fluentd/etc/config.d/install-plugins.sh"]
       {{- end }}
         env:
           - name: OUTPUT_HOST
@@ -94,15 +94,15 @@ spec:
           timeoutSeconds: 1
         volumeMounts:
         - name: config-volume-{{ template "fluentd.fullname" . }}
-          mountPath: /etc/fluent/config.d
+          mountPath: /fluentd/etc/config.d
         - name: buffer
           mountPath: "/var/log/fluentd-buffers"
         {{- if .Values.tls.enabled }}
         - name: tls-info-{{ template "fluentd.fullname" . }}
-          mountPath: "/etc/fluent/certs"
+          mountPath: "/fluentd/etc/certs"
           readOnly: true
         - name: ca-info-{{ template "fluentd.fullname" . }}
-          mountPath: "/etc/fluent/ca"
+          mountPath: "/fluentd/etc/ca"
           readOnly: true
         {{- end }}
       serviceAccountName: {{ template "fluentd.fullname" . }}
